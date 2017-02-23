@@ -19,6 +19,7 @@ w = 2 * rho / (mu_0 * h)    # velocity of magnetic propagation through beam (m/s
 # WHEEL
 r = ((side_len + spacing) * num_magnets) / (2 * np.pi)  # radius of wheel
 
+
 # CONVERSIONS
 rpm_to_angular_vel = lambda rpm: 30 * rpm / np.pi
 tangential_vel = lambda angular_vel: r * angular_vel    # tangential velocity of wheel given
