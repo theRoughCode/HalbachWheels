@@ -29,24 +29,41 @@ rpm_to_tan_vel = lambda rpm: tangential_vel(rpm_to_angular_vel(rpm))
 F_lift = lambda rpm: ((3 * mu_0 * m ** 2) / (32 * np.pi * z_0 ** 4)) * (1 - (w / np.sqrt(rpm_to_tan_vel(rpm) ** 2 + w ** 2)))
 F_drag = lambda rpm: (w / rpm_to_tan_vel(rpm)) * F_lift(rpm)
 
-def getPOI(f, g, x0):
-    tolerance = 0.0001
-    h = lambda x: f(x) - g(x)
-    dh = lambda x : (h(x+tolerance) - h(x)) / tolerance
-    x1 = x0 - h(x0)/dh(x0)
+
+def Newton(f, x0, tolerance, derivative=False):
+    if derivative:
+        h = lambda x: (f(x + tolerance) - f(x)) / tolerance
+    else:
+        h = f
+    dh = lambda x: (h(x + tolerance) - h(x)) / tolerance
+    x1 = x0 - h(x0) / dh(x0)
     if h(x1) > tolerance:
-        return getPOI(f, g, x1)
+        return Newton(f, x1, tolerance, derivative)
     else:
         return x1
 
 
-# Compute the x and y coordinates for points on sine and cosine curves
-x = np.arange(0.001, 30)
+def getPOI(f, g):
+    tolerance = 0.0001
+    x0 = 2
+    return Newton(lambda x: f(x) - g(x), x0, tolerance)
+
+
+def getMax(f):
+    tolerance = 0.0001
+    x0 = 3
+    return Newton(f, x0, tolerance, True)
+
+# Compute the x and y coordinates
+START = 0.001
+END = 5
+STEP = 0.1
+x = np.arange(START, END, STEP)
 F_lift_plot = F_lift(x)
 F_drag_plot = F_drag(x)
-max_drag_x = np.argmax(F_drag_plot)
+max_drag_x = getMax(F_drag)
 max_drag_y = F_drag(max_drag_x)
-POI_x = getPOI(F_lift, F_drag, 2)
+POI_x = getPOI(F_lift, F_drag)
 POI_y = F_drag(POI_x)
 
 # Plot the points using matplotlib
@@ -58,7 +75,7 @@ plt.xlabel('RPM (cycles/min)')
 plt.ylabel('Force (N)')
 plt.title('Force vs RPM')
 plt.legend(['Lift Force', 'Drag Force'])
-#plt.annotate('POI = (' + str('{0:.2f}'.format(POI_x)) + ', ' + str('{0:.2f}'.format(POI_y)) + ')', xy=(2, 1), xytext=(0.5, POI_y))
-#plt.annotate('Max F_drag = (' + str('{0:.2f}'.format(max_drag_x)) + ', ' + str('{0:.2f}'.format(max_drag_y)) + ')',
- #            xy=(2, 1), xytext=(max_drag_x + 0.1, max_drag_y))
+plt.annotate('POI = (' + str('{0:.2f}'.format(POI_x)) + ', ' + str('{0:.2f}'.format(POI_y)) + ')', xy=(2, 1), xytext=(0.7, POI_y))
+plt.annotate('Max F_drag = (' + str('{0:.2f}'.format(max_drag_x)) + ', ' + str('{0:.2f}'.format(max_drag_y)) + ')',
+             xy=(2, 1), xytext=(max_drag_x - 0.2, max_drag_y + 1000))
 plt.show()
