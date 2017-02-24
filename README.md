@@ -13,7 +13,9 @@ Plots the **lift force** and the **drag force** on a **Force vs RPM** graph.
  - Distance from beam = 10mm
  
 ### Current Plot
-![Plot](https://github.com/theRoughCode/HalbachWheels/blob/master/graph.png)
+![Overview](https://github.com/theRoughCode/HalbachWheels/blob/master/screenshots/graph.png)
+### Key Points
+![Key Points](https://github.com/theRoughCode/HalbachWheels/blob/master/screenshots/keypoints.png)
 
 
 ## Sources
