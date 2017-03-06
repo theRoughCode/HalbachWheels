@@ -18,10 +18,9 @@ m = V * M                   # magnetic vertical dipole moment (A-m^2)
 w = 2 * rho / (mu_0 * h)    # velocity of magnetic propagation through beam (m/s)
 # WHEEL
 r = ((side_len + spacing) * num_magnets) / (2 * np.pi)  # radius of wheel
-print (r)
 
 # CONVERSIONS
-rpm_to_angular_vel = lambda rpm: 30 * rpm / np.pi
+rpm_to_angular_vel = lambda rpm: np.pi * rpm / 30
 tangential_vel = lambda angular_vel: r * angular_vel    # tangential velocity of wheel given
 rpm_to_tan_vel = lambda rpm: tangential_vel(rpm_to_angular_vel(rpm))
 
@@ -36,7 +35,7 @@ F_drag_rpm = lambda rpm: (w / rpm_to_tan_vel(rpm)) * F_lift_rpm(rpm)
 
 def Newton(f, x0, tolerance, derivative=False):
     if derivative:
-        h = lambda x: (f(x + tolerance) - f(x)) / tolerance
+        h = lambda x: abs((f(x + tolerance) - f(x)) / tolerance)
     else:
         h = f
     dh = lambda x: (h(x + tolerance) - h(x)) / tolerance
@@ -49,31 +48,37 @@ def Newton(f, x0, tolerance, derivative=False):
 
 def getPOI(f, g):
     tolerance = 0.0001
-    x0 = 2
-    return Newton(lambda x: f(x) - g(x), x0, tolerance)
+    x0 = 250
+    return Newton(lambda x: abs(f(x) - g(x)), x0, tolerance)
 
 
 def getMax(f):
-    tolerance = 0.0001
-    x0 = 3
+    tolerance = 0.01
+    x0 = 270
     return Newton(f, x0, tolerance, True)
 
 
 # CONTROLS
-display_points = False  # display POI and max/min
-F_var = "v"             # v or rpm
+display_points = True       # display POI and max/min
+display_labels = False      # display labels for points
+ZOOM = False                # zoom in to key points
+F_var = "rpm"               # v or rpm
 START = 0.001
-END = 25
+END = 2000                  # RPM (default)
+if ZOOM:
+    END /= 16
+if F_var == "v":
+    END = rpm_to_tan_vel(END)
 STEP = 0.1
 
 # Compute the x and y coordinates
 x = np.arange(START, END, STEP)
 if F_var == "v":
-    F_drag = F_lift_v
-    F_lift = F_drag_v
+    F_lift = F_lift_v
+    F_drag = F_drag_v
 else:
-    F_drag = F_lift_rpm
-    F_lift = F_drag_rpm
+    F_lift = F_lift_rpm
+    F_drag = F_drag_rpm
 F_lift_plot = F_lift(x)
 F_drag_plot = F_drag(x)
 if display_points:
@@ -92,7 +97,8 @@ plt.legend(['Lift Force', 'Drag Force'])
 if display_points:
     plt.plot(POI_x, POI_y, 'ro')
     plt.plot(max_drag_x, max_drag_y, 'bD')
-    plt.annotate('POI = (' + str('{0:.2f}'.format(POI_x)) + ', ' + str('{0:.2f}'.format(POI_y)) + ')', xy=(2, 1), xytext=(0.7, POI_y))
-    plt.annotate('Max F_drag = (' + str('{0:.2f}'.format(max_drag_x)) + ', ' + str('{0:.2f}'.format(max_drag_y)) + ')',
-                 xy=(2, 1), xytext=(max_drag_x - 0.2, max_drag_y + 1000))
+    if display_labels:
+        plt.annotate('POI = (' + str('{0:.2f}'.format(POI_x)) + ', ' + str('{0:.2f}'.format(POI_y)) + ')', xy=(2, 1), xytext=(POI_x - 150, POI_y))
+        plt.annotate('Max F_drag = (' + str('{0:.2f}'.format(max_drag_x)) + ', ' + str('{0:.2f}'.format(max_drag_y)) + ')',
+                     xy=(2, 1), xytext=(max_drag_x - 30, max_drag_y + 20))
 plt.show()
