@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # BEAM
-rho = 265.e-10              # resistivity of the beam (Ohm-meter)
+rho = 292.e-10              # resistivity of the beam (Ohm-meter)
 mu_0 = 4.e-7 * np.pi        # vacuum permeability (N/A^2)
 h_0 = 25.e-3                # thickness of beam (m); first and last 61m of track
 h = 15.e-3                  # thickness of beam (m); rest of track
@@ -13,11 +13,13 @@ num_magnets = sets * 4      # total number of magnets
 spacing = 0.0127            # space between each magnet (m)
 side_len = 0.0254           # side length of each magnet (m)
 V = side_len ** 3           # volume of neodymium magnets (m^3)
-M = 1138.e3                 # magnetization of neodymium magnets (A/m)
+M = 796.e3                  # magnetization of neodymium magnets (A/m)
 m = V * M                   # magnetic vertical dipole moment (A-m^2)
 w = 2 * rho / (mu_0 * h)    # velocity of magnetic propagation through beam (m/s)
 # WHEEL
 r = ((side_len + spacing) * num_magnets) / (2 * np.pi)  # radius of wheel
+# POD
+mass = 200                  # mass of pod (kg)
 
 # CONVERSIONS
 rpm_to_angular_vel = lambda rpm: np.pi * rpm / 30
@@ -64,7 +66,7 @@ display_labels = False      # display labels for points
 ZOOM = False                # zoom in to key points
 F_var = "rpm"               # v or rpm
 START = 0.001
-END = 2000                  # RPM (default)
+END = 4000                  # RPM (default)
 if ZOOM:
     END /= 16
 if F_var == "v":
@@ -84,6 +86,8 @@ F_drag_plot = F_drag(x)
 if display_points:
     max_drag_x = getMax(F_drag)
     max_drag_y = F_drag(max_drag_x)
+    max_accel = max_drag_y / mass
+    print(max_accel)
     POI_x = getPOI(F_lift, F_drag)
     POI_y = F_drag(POI_x)
 
