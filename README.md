@@ -8,7 +8,7 @@ Plots the **lift force** and the **drag force** on a **Force vs RPM** graph.
  - Diameter of Wheel = 10"
  - Spacing between Magnets = 0.5"
  - Number of Magnets in each wheel = 20 (5 halbach sets of 4 magnets each)
- - Magnetization of each Magnet = 1138kA/m ~~7580kA/m~~ (using Nom. Coercivity of N50M from [here](http://www.cy-magnetics.com/CY-Mag-NdFeB.pdf))
+ - Magnetization of each Magnet = 796kA/m ~~7580kA/m~~ (using Hcb value of N52 Neodymium Magnets from [here](http://e-magnetsuk.com/neodymium_magnets/neodymium_grades.aspx))
  - Thickness of beam = 15mm
  - Distance from beam = 10mm
  
