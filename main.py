@@ -62,11 +62,11 @@ def getMax(f):
 
 # CONTROLS
 display_points = True       # display POI and max/min
-display_labels = False      # display labels for points
-ZOOM = False                # zoom in to key points
+display_labels = True      # display labels for points
+ZOOM = True                # zoom in to key points
 F_var = "rpm"               # v or rpm
 START = 0.001
-END = 4000                  # RPM (default)
+END = 6500                  # RPM (default)
 if ZOOM:
     END /= 16
 if F_var == "v":
@@ -104,5 +104,5 @@ if display_points:
     if display_labels:
         plt.annotate('POI = (' + str('{0:.2f}'.format(POI_x)) + ', ' + str('{0:.2f}'.format(POI_y)) + ')', xy=(2, 1), xytext=(POI_x - 150, POI_y))
         plt.annotate('Max F_drag = (' + str('{0:.2f}'.format(max_drag_x)) + ', ' + str('{0:.2f}'.format(max_drag_y)) + ')',
-                     xy=(2, 1), xytext=(max_drag_x - 30, max_drag_y + 20))
+                     xy=(2, 1), xytext=(max_drag_x - 30, max_drag_y + 10))
 plt.show()
